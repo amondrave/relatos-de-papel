@@ -1,7 +1,19 @@
+import { useState } from "react";
 import "./catalog.css";
 import catalog_list from "../../utilities/catalog_list.json";
 import CatalogItem from "./CatalogItem";
+import Pagination from "../../components/shared/Pagination";
+
 export default function CatalogPage() {
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const currentPageData = catalog_list.pages.find(page => page.page === currentPage);
+    const itemsToDisplay = currentPageData ? currentPageData.items : [];
+
     return (
         <div className="catalog-container">
             <div className="row h-100">
@@ -36,15 +48,16 @@ export default function CatalogPage() {
                         </button>
                     </form>
                     <div className="catalog-list">
-                        {
-                            catalog_list.pages.map((page) => (
-                                <div key={page.page} className="catalog-page-wrapper">
-                                    {page.items.map((item) => (
-                                        <CatalogItem key={item.titulo} {...item} />
-                                    ))}
-                                </div>
-                            ))
-                        }
+                        {itemsToDisplay.map((item) => (
+                            <CatalogItem key={item.titulo} {...item} />
+                        ))}
+                    </div>
+                    <div className="mt-4 d-flex justify-content-center">
+                        <Pagination 
+                            currentPage={currentPage}
+                            totalPages={catalog_list.total_pages}
+                            onPageChange={handlePageChange}
+                        />
                     </div>
                 </div>
             </div>
